@@ -1,0 +1,8 @@
+
+services:
+  nginx:
+    build: requirements/nginx
+    container_name: nginx
+    ports:
+      - "8080:80" # Host port 80 → Container port 80
+
