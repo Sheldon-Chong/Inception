@@ -8,6 +8,7 @@ RUN apt update && apt upgrade -y && \
 
 COPY example.env /example.env
 COPY init_maria_db.sh /init_maria_db.sh
+COPY init_database.sql /init_database.sql
 RUN chmod +x /init_maria_db.sh
 
 ENTRYPOINT [ "/init_maria_db.sh" ]
