@@ -3,7 +3,6 @@
 service mariadb start
 
 # Source the .env file to load environment variables
-source ./example.env
 eval "cat <<EOF >db1.sql
 $(cat init_database.sql)
 EOF"
