@@ -13,5 +13,10 @@ RUN mkdir -p /srv/www && \
 
 WORKDIR /srv/www
 
+COPY init_wordpress.sh /init_wordpress.sh 
+COPY wp-config_new.php /wp-config_new.php
+
+RUN chmod +x /init_wordpress.sh
+
 # Start PHP's built-in server on port 8000
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "/srv/www"]
+ENTRYPOINT [ "/init_wordpress.sh" ]
