@@ -11,12 +11,19 @@ RUN mkdir -p /srv/www && \
     curl https://wordpress.org/latest.tar.gz | tar zx -C /srv/www --strip-components=1 && \
     chown -R www-data:www-data /srv/www
 
+# Download WordPress CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
+
+RUN apt-get update && apt-get install -y less
+
 WORKDIR /srv/www
 
 COPY init_wordpress.sh /init_wordpress.sh 
-COPY wp-config_new.php /wp-config_new.php
 
 RUN chmod +x /init_wordpress.sh
+USER www-data
 
 # Start PHP's built-in server on port 8000
 ENTRYPOINT [ "/init_wordpress.sh" ]
