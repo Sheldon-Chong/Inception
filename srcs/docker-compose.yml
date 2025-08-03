@@ -4,13 +4,12 @@ networks:
 
 services:
   mariadb:
-    build: requirements/mariadb
     container_name: mariadb
+    build: requirements/mariadb
     env_file: ".env"
     volumes:
       - mariadb:/var/lib/mysql
     networks: [ inception ]
-    tty: true
     restart: always
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${ROOT_PASSWORD}" ]
@@ -18,35 +17,35 @@ services:
       timeout: 5s
       retries: 5
   wordpress:
-    build: requirements/wordpress
     container_name: wordpress
+    build: requirements/wordpress
     env_file: ".env"
     networks: [ inception ]
     volumes:
       - wordpress:/var/www/html
     restart: always
 
-    depends_on:
-      mariadb:
-        condition: service_healthy
-
     healthcheck:
       test: ["CMD-SHELL", "service php7.4-fpm status | grep running"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
   nginx:
     build: requirements/nginx
     container_name: nginx
     networks: [ inception ]
     env_file: ".env"
-    depends_on:
-      wordpress:
-        condition: service_healthy
     ports:
       - "443:443" # Only expose HTTPS
     volumes:
       - wordpress:/var/www/html
+    depends_on:
+      wordpress:
+        condition: service_healthy
 
 volumes:
   mariadb:

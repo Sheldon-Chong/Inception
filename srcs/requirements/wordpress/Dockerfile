@@ -1,17 +1,21 @@
 FROM debian:bullseye
 
-RUN apt update && apt upgrade -y && \
+ENV WORDPRESS_ROOT=/var/www/html
+ENV WEB_USER=www-data
+ENV WEB_GROUP=www-data
+
+RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y \
         curl \
         php \
         php-fpm \
         php-mysql \
-        php-cli unzip \
+        php-cli \
+        unzip \
+        less \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-ENV WORDPRESS_ROOT=/var/www/html
 
 # -- Download WordPress CLI --
 # so that we can use it from bash, and automate the creation of users
@@ -19,31 +23,34 @@ RUN curl  --remote-name https://raw.githubusercontent.com/wp-cli/builds/gh-pages
     chmod +x wp-cli.phar && \
     mv    wp-cli.phar /usr/local/bin/wp
 
-# -- Download less --
-# less is a command-line pager program.
-# lets you view/scroll-through text output one screen at a time, making it easier to read outputs.
-# WP-CLI uses less to display paged output by default.
-RUN apt-get update && apt-get install -y less
+# # -- Download less --
+# # less is a command-line pager program.
+# # lets you view/scroll-through text output a screen at a time.
+# # WP-CLI uses less to display paged output by default.
+# RUN apt-get install -y less
 
+# Download the latest WordPress archive and pass value in to tar to extract to wordpress root
+# --strip-components=1 removes the top-level directory from the archive.
 RUN mkdir -p ${WORDPRESS_ROOT} && \
     curl https://wordpress.org/latest.tar.gz | \ 
-    tar zx -C ${WORDPRESS_ROOT} --strip-components=1 && \
-    chown --recursive www-data:www-data ${WORDPRESS_ROOT}
+        tar zx --directory ${WORDPRESS_ROOT} --strip-components=1 && \
+    chown --recursive ${WEB_USER}:${WEB_GROUP} ${WORDPRESS_ROOT}
 
-WORKDIR ${WORDPRESS_ROOT}
-
-RUN mkdir -p /var/log && chown --recursive www-data:www-data /var/log
-RUN mkdir -p /run/php && chown --recursive www-data:www-data /run/php
+# var/log directory is used to store log files for the system and applications.
+# run/php contains files to comunicate between webserver and php-fpm
+# change owner of both of these directories to the web user
+RUN mkdir -p /var/log && chown --recursive ${WEB_USER}:${WEB_GROUP} /var/log
+RUN mkdir -p /run/php && chown --recursive ${WEB_USER}:${WEB_GROUP} /run/php
 
 COPY ./tools/init_wordpress.sh /init_wordpress.sh 
 RUN chmod +x /init_wordpress.sh
 
-
+#modify PHP-FPM config to listen on TCP port 9000 on all interfaces (all interfaces is 0.0.0.0)
 RUN sed -i 's|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|' /etc/php/7.4/fpm/pool.d/www.conf
 
+WORKDIR ${WORDPRESS_ROOT}
 USER www-data
 
-# Start PHP's built-in server on port 8000
 ENTRYPOINT [ "/init_wordpress.sh" ]
 
 
@@ -63,4 +70,4 @@ ENTRYPOINT [ "/init_wordpress.sh" ]
     
 #     # - www-data is a standard user and group to be used by web servers like Nginx.
 #     # - files/processes in www-data have limited permissions for security, preventing web applications from having root access.
-#     chown --recursive www-data:www-data /srv/www
+#     chown --recursive ${WEB_USER}:${WEB_GROUP} /srv/www

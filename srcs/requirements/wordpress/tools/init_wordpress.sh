@@ -5,11 +5,14 @@ cd /var/www/html
 
 cp wp-config-sample.php wp-config.php
 
+
 sed --in-place "s/database_name_here/${DB_NAME}/"     wp-config.php
 sed --in-place "s/username_here/${DB_USER}/"          wp-config.php
 sed --in-place "s/password_here/${DB_USER_PASSWORD}/" wp-config.php
 sed --in-place "s/localhost/mariadb/"                 wp-config.php
 
+# wp --help description: "Downloads, installs, updates, and manages a WordPress installation."
+# check if wordpress is installed
 if ! wp core is-installed; then
   wp core install \
     --url="${WP_DOMAIN_NAME}" \
