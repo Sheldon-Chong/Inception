@@ -28,7 +28,6 @@ services:
     restart: always
 
     healthcheck:
-      
       test: ["CMD-SHELL", "service php7.4-fpm status | grep running"]
       interval: 10s
       timeout: 5s
@@ -54,6 +53,8 @@ volumes:
   mariadb:
     driver_opts:
       type: none
+
+      # tells Docker to bind mount a specific directory from your host into the container.
       o: bind
       device: ${HOME}/data/mariadb
   wordpress:
@@ -62,4 +63,4 @@ volumes:
       o: bind
       device: ${HOME}/data/wordpress
       
-    
+# Bind mounts allow you to mount an already-mounted file system to another location within the file system.

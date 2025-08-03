@@ -1,3 +1,5 @@
+events {}
+
 http {
     
     # Tells nginx the appropriate Content-type header to set for files requested by user
