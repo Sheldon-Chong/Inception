@@ -7,6 +7,8 @@ services:
     container_name: mariadb
     build: requirements/mariadb
     env_file: ".env"
+    
+    # when mariadb wants to access /var/lib/mysql, it will actually point to ${HOME}/data/mariadb
     volumes:
       - mariadb:/var/lib/mysql
     networks: [ inception ]
@@ -26,6 +28,7 @@ services:
     restart: always
 
     healthcheck:
+      
       test: ["CMD-SHELL", "service php7.4-fpm status | grep running"]
       interval: 10s
       timeout: 5s
