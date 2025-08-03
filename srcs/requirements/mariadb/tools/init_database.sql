@@ -3,11 +3,10 @@ CREATE DATABASE IF NOT EXISTS ${DB_NAME};
 
 -- create user
 /*
-In MySQL/MariaDB, users are defined as 'username'@'hostname'. The hostname part specifies where the user can connect from:
-	'user'@'localhost' - Can only connect from the same machine
-	'user'@'192.168.1.100' - Can only connect from that specific IP
-	'user'@'%.example.com' - Can connect from any subdomain of example.com
-	'user'@'%' - Can connect from any host/IP address
+in MySQL/MariaDB, users are defined as 'username'@'hostname'. 
+'hostname' specifies where the user can connect from
+- Typically, you'd specify a hostname/ip, like 192.168.1.100
+- using % means any host is able to connect.
 */
 CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_USER_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';

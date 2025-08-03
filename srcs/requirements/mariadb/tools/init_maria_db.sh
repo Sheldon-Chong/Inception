@@ -1,7 +1,9 @@
 #!/bin/bash
 service mariadb start
 
-# Source the .env file to load environment variables
+
+# Generates an SQL file by reading'init_database.sql' and writing them into 'db1.sql' using a herdoc and command substitution.
+# 'eval allows variable and command expansion within the SQL content.
 eval "cat <<EOF >db1.sql
 $(cat init_database.sql)
 EOF"

@@ -1,62 +1,63 @@
-events {
-    worker_connections 1024;
-}
-
 http {
     
+    # Tells nginx the appropriate Content-type header to set for files requested by user
     include /etc/nginx/mime.types;
     
+
+    # ----- LOG SETTINGS -----
     access_log /var/log/nginx/access.log;
     error_log /var/log/nginx/error.log;
 
-    
 
-    # Basic settings
+    # ----- BASIC SETTINGS -----
+    # on means nginx respond to clients without grouping small data packets together, reducing user delay
     tcp_nodelay on;
+
+    # time (in seconds) that a connection will stay open before being closed
     keepalive_timeout 65;
-    
 
-    ssl_certificate     /self_signed_certificate.pem;
-    ssl_certificate_key /private.key;
-    ssl_dhparam         /dhparam.pem;
 
-    # SSL/TLS protocol versions are allowed for HTTPS connections.
+    # only SSL/TLS protocol versions are allowed for HTTPS connections.
     ssl_protocols TLSv1.2 TLSv1.3;
 
-    # force http traffic to use https, since 80 is the port that listens for "http"
     server {
-        listen 80;
-        server_name shechong.42.fr;
-        return 301 https://$host$request_uri;
-    }
+        # ----- LISTEN CONFIGURATION -----
+        # listen on 443, which is the standard port for HTTPS 
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
 
-
-
-
-
-    server {
-        listen 443 ssl;
-        listen [::]:443 ssl;
-
+        
         server_name shechong.42.fr;
 
+        # ----- SECURITY CONFIGURATION -----
         ssl_certificate     /self_signed_certificate.pem;
         ssl_certificate_key /private.key;
         ssl_dhparam         /dhparam.pem;
 
+        # /var/www/html is the path containing all the php files once we install wp
         root /var/www/html;
+
+        # when accessing directory instead of file, server index.php file
 		index index.php;
 
-        
         location / {
-            try_files $uri $uri/ /index.php?$args;
+            # for any uri acesssed, we check if it exists 
+            try_files $uri $uri/ /index.php?$args =404;
         }
 
+        
         location ~ \.php$ {
-            fastcgi_pass wordpress:9000;
-            fastcgi_index index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
             include fastcgi_params;
+
+            # send PHP requests to the FastCGI server running in wordpress container accessible through 9000 
+            fastcgi_pass wordpress:9000;
+
+            # default file to serve  fascgi when dir is requested. 
+            fastcgi_index index.php;
+
+            # $document_root: root of the current server or location block (/var/www/html)
+            # $fastcgi_script_name: extracts uri portion of a full url
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         }
 
     }
