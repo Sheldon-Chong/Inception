@@ -1,6 +1,7 @@
 networks:
   inception:
     name: inception
+    driver: bridge
 
 services:
   mariadb:
@@ -48,6 +49,7 @@ services:
     depends_on:
       wordpress:
         condition: service_healthy
+    restart: always
 
 volumes:
   mariadb:
