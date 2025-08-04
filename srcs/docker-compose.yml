@@ -7,6 +7,7 @@ services:
   mariadb:
     container_name: mariadb
     build: requirements/mariadb
+    image: mariadb:42
     env_file: ".env"
     
     # when mariadb wants to access /var/lib/mysql, it will actually point to ${HOME}/data/mariadb
@@ -22,6 +23,7 @@ services:
   wordpress:
     container_name: wordpress
     build: requirements/wordpress
+    image: wordpress:42
     env_file: ".env"
     networks: [ inception ]
     volumes:
@@ -38,6 +40,7 @@ services:
       mariadb:
         condition: service_healthy
   nginx:
+    image: nginx:42
     build: requirements/nginx
     container_name: nginx
     networks: [ inception ]
