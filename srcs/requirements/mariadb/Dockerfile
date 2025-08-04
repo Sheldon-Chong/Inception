@@ -17,6 +17,7 @@ COPY ./tools/init_database.sql  /init_database.sql
 RUN chmod +x /init_maria_db.sh
 
 
+# allows other containers on the same network to connect to MariaDB using its container name and port 3306.
 # substitutes "bind-address = 127.0.0.1"
 # with        "bind-address = 0.0.0.0"
 RUN sed --in-place 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' ${MARIADB_CONFIG_FILE} || \
