@@ -8,8 +8,8 @@ in MySQL/MariaDB, users are defined as 'username'@'hostname'.
 - Typically, you'd specify a hostname/ip, like 192.168.1.100
 - using % means any host is able to connect.
 */
-CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_USER_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
+CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${MYSQL_USER}'@'%';
 
 -- set user permisions
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${ROOT_PASSWORD}';
