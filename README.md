@@ -21,7 +21,7 @@ To understand what the final project looks like, I recommend running this server
     
     `/etc/hosts` is a file that translates hostnames (like `www.example.com`) into their corresponding IP addresses (like `192.168.1.100`). 
     
-- When starting my server, a `.env` file will need to be present in the `/srcs` folder. This file must contain certain key-value parameters. These parameters are used throughout the container in the form of env variables. Fill-in `env.template` and rename it to `.env` to make this program work.
+- When starting my server, a `.env` file will need to be present in the `/readme` folder. This file must contain certain key-value parameters. These parameters are used throughout the container in the form of env variables. Fill-in `env.template` and rename it to `.env` to make this program work.
 
 ### Running the server
 
@@ -66,7 +66,7 @@ A virtual machine (VM) emulates an entire physical computer. Each VM includes it
 - Because every VM carries a complete OS kernel, device drivers, and system libraries, it is large (gigabytes), slow to boot (tens of seconds to minutes), and relatively heavy on RAM and CPU.
 - VMs provide strong isolation and can run different OS families on the same host.
 
-![image.png](/srcs/image%201.png)
+![image.png](/readme/image%201.png)
 
 Docker containers, share the host machine’s kernel (meaning if the host kernel is Linux, only can distributions of Linux run atop it). A container package together binaries, libraries, and configuration files.
 
@@ -121,7 +121,7 @@ This program executed by a server to process a request is known as **CGI** (Comm
 
 This is where FastCGI is introduced, a successor to old-school CGI. The concept of fastCGI is that there are a pool of worker-processors that are ready to handle
 
-PHP-FPM is the FastCGI Process Manager for PHP. During runtime, PHP-FPM keeps a pool of worker processes ready to handle requests forwarded from a web server like Nginx. [Read about configuring nginx fastCGI](/srcs/https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html)
+PHP-FPM is the FastCGI Process Manager for PHP. During runtime, PHP-FPM keeps a pool of worker processes ready to handle requests forwarded from a web server like Nginx. [Read about configuring nginx fastCGI](/readme/https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html)
 
 CGI and FastCGI are both server-side protocols, meaning they are simply a set of standardized instructions that tell Nginx, and any other web server how it should execute and utilize CGI, while PHP-FPM is an implementation of FastCGI. 
 
@@ -129,7 +129,7 @@ CGI and FastCGI are both server-side protocols, meaning they are simply a set of
 
 The high-level overview of how my containers connect to each other, to ultimately deliver WordPress pages to the user as is required by this project:
 
-![image.png](/srcs/image%202.png)
+![image.png](/readme/image%202.png)
 
 - Nginx — a webserver — is listening on 443, and awaiting any incoming connections. Nginx’s aim is to connect to clients, and deliver requested web pages to them to be viewed in the browser.
 - When accessing a url like `https://shechong.42.fr` or `https://domain.42.fr`, it will be wrapped in http request format, and accessing specifically using `https://` means the request is sent to port `443` (Port 443 is the default gateway for HTTPS).
@@ -152,7 +152,7 @@ Container images are built using Dockerfiles. Because I have 3 containers, each 
 
 Docker Files are instructions to build images, and from these images we may create containers, which are individual running instances of the image.
 
-![image.png](/srcs/image%203.png)
+![image.png](/readme/image%203.png)
 
 ## Docker Compose
 
@@ -223,7 +223,7 @@ Compose reads this file, builds or pulls the needed images, creates the defined 
 
 Utilizing the Docker compose file, I am able to connect my containers together by making them share the same network Docker Network, and utilize volumes to allow data within containers to persistently store data on the host machine, even after container sessions have been closed or rebooted.
 
-![image.png](/srcs/image%204.png)
+![image.png](/readme/image%204.png)
 
 ---
 
@@ -313,7 +313,7 @@ The Nginx server is equipped with the certificate to allow the website to be acc
 - In the Makefile, commands are used to generate the certificate.
     - `openssl req -out <output path for the newly created .csr file>`  creates the `.csr` file (certificate signing request file). This file is passed onto a certificate generation tool, for a certificate to be generated.
     - `openSSL x509 -in <.csr file>` generates the self-signed certificate by passing in the `.csr` file.
-- The files generated from the Makefile are passed into In the the nginx config file — `/srcs/requirements/nginx/conf`.
+- The files generated from the Makefile are passed into In the the nginx config file — `/readme/requirements/nginx/conf`.
     
     ```verilog
     ssl_certificate     /self_signed_certificate.pem;
@@ -331,7 +331,7 @@ The Nginx server is equipped with the certificate to allow the website to be acc
     4. At the top left within the search bar, a `Not secure` indicator is present. Click on it
     5. Click on `Certificate details` 
     
-    Note: My server only supports the ssl protocols `TLSv1.2` and `TLSv1.3`. You may view them in the `/srcs/requirements/nginx/conf`
+    Note: My server only supports the ssl protocols `TLSv1.2` and `TLSv1.3`. You may view them in the `/readme/requirements/nginx/conf`
     
     ```
     ssl_protocols TLSv1.2 TLSv1.3;
